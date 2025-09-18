@@ -16,7 +16,7 @@ async def ai_response(content: str,task:Literal['traffic','climate']):
 
     # 注意：
     1. 语言简洁清晰，不说多余的话
-    2. 使用纯文本回答，不使用markdown格式
+    2. 使用纯文本回答，不使用代码格式
     """
     climate_system_message = """
     # 你的角色： 气候差异分析师
@@ -27,7 +27,7 @@ async def ai_response(content: str,task:Literal['traffic','climate']):
 
     # 注意：
     1. 语言简洁清晰，不说多余的话
-    2. 使用纯文本回答，不使用markdown格式
+    2. 使用纯文本回答，不使用代码格式
     """
 
     system_message = traffic_system_message if task == "traffic" else climate_system_message

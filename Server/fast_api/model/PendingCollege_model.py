@@ -29,7 +29,7 @@ class PendingCollegeModel(Base):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     admin_code: Mapped[str] = mapped_column(String(9), nullable=True)
     submit_time: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow)
-    college_id: Mapped[str] = mapped_column(String(9), nullable=False)
+    college_id: Mapped[int] = mapped_column(Integer, nullable=False)  # 修复数据类型为Integer
 
     def serialize(self):
         # 处理几何字段的序列化

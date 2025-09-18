@@ -103,16 +103,40 @@ export function AdminInterface({ selectedCollege, onSelect, mapDetailCollegeId, 
 
   const doReview = async () => {
     if (!reviewId || !reviewStatus) return
-    const qs = new URLSearchParams({ status: reviewStatus, ...(reviewComment ? { comment: reviewComment } : {}) })
-    const res = await fetch(`/api/colleges/review/${reviewId}?${qs.toString()}`, {
-      method: 'PUT',
-      headers: buildHeaders()
-    })
-    const data = await res.json().catch(() => ({}))
-    setMessages((m) => [...m, `审核结果: ${JSON.stringify(data)}`])
     
-    // 审核完成后刷新列表
-    getPendingReviews()
+    try {
+      const qs = new URLSearchParams({ status: reviewStatus, ...(reviewComment ? { comment: reviewComment } : {}) })
+      const res = await fetch(`/api/colleges/review/${reviewId}?${qs.toString()}`, {
+        method: 'PUT',
+        headers: buildHeaders()
+      })
+      
+      if (!res.ok) {
+        let errorMessage = `HTTP error! status: ${res.status}`;
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.detail || `HTTP error! status: ${res.status}`;
+        } catch (e) {
+          // 如果无法解析JSON，使用默认错误消息
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const data = await res.json().catch(() => ({}))
+      setMessages((m) => [...m, `审核结果: ${JSON.stringify(data)}`])
+      
+      // 审核完成后刷新列表
+      getPendingReviews()
+    } catch (error: unknown) {
+      console.error('审核失败:', error)
+      let errorMessage = '审核失败';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      setMessages((m) => [...m, errorMessage])
+    }
   }
 
   const deleteCollege = async (id: number) => {
