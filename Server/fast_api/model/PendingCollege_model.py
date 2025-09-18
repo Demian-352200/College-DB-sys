@@ -29,6 +29,7 @@ class PendingCollegeModel(Base):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     admin_code: Mapped[int] = mapped_column(Integer, ForeignKey('AdminDivision.admin_code'), nullable=True)
     submit_time: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow)
+    college_id: Mapped[str] = mapped_column(String(9), nullable=False)
 
     def serialize(self):
         # 处理几何字段的序列化
@@ -44,6 +45,7 @@ class PendingCollegeModel(Base):
         return {
             'review_id': self.review_id,
             'user_id': self.user_id,
+            'college_id':self.college_id,
             'shape': shape_wkt,
             'province': self.province,
             'name': self.name,

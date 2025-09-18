@@ -108,6 +108,7 @@ class CollegeService(BaseService):
 
         # 创建新高校对象
         new_college = CollegeModel(
+            college_id=college_data['college_id'],
             shape=shape,
             province=college_data['province'],
             name=college_data['name'],
@@ -170,9 +171,10 @@ class CollegeService(BaseService):
 
         # 将高校信息存储到待审核表中，使用review_id作为主键
         pending_college = PendingCollegeModel(
-            review_id=review_record.review_id,  # 使用review_id作为主键
+            review_id=review_record.review_id,
             user_id=user_id,
             shape=shape,
+            college_id=college_data.get('college_id'),
             province=college_data.get('province'),
             name=college_data.get('name'),
             category=college_data.get("category"),
@@ -328,7 +330,7 @@ class CollegeService(BaseService):
         college = db_session.get(CollegeModel, college_id)
 
         if not college:
-            raise ValueError("高校不存在")
+            raise ValueError(f"高校ID {college_id} 不存在")
 
         # 记录删除前的数据
         old_data = json.dumps(college.serialize(), ensure_ascii=False)
@@ -574,6 +576,7 @@ class CollegeService(BaseService):
         pending_college_data = PendingCollegeModel(
             review_id = review_record.review_id,
             user_id = user_id,
+            college_id=college_data.get('college_id', college.college_id),
             shape= shape,
             province = college_data.get('province', college.province),
             name= college_data.get('name', college.name),

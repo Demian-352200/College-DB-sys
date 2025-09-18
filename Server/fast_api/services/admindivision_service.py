@@ -29,11 +29,11 @@ class AdminDivisionService(BaseService):
             raise ValueError("用户不存在")
 
         if user.role == 'admin':
-            new_climate = AdminDivisionModel(**admin_data)
-            db_session.add(new_climate)
+            new_admin = AdminDivisionModel(**admin_data)
+            db_session.add(new_admin)
             db_session.commit()
-            db_session.refresh(new_climate)
-            return new_climate
+            db_session.refresh(new_admin)
+            return new_admin
 
         else:
             # 普通用户无权创建

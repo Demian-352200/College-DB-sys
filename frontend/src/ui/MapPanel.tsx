@@ -10,7 +10,7 @@ type Props = {
 }
 
 type CollegeOut = {
-  college_id: number
+  college_id: string
   name: string
   longitude: number
   latitude: number
@@ -23,7 +23,7 @@ type CollegeOut = {
   is_211?: number
   is_double_first?: number
   address?: string
-  admin_code?: number | null
+  admin_code?: string | null
   affiliation?: string
 }
 

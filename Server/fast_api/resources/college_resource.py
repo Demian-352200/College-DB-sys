@@ -25,7 +25,7 @@ class CollegeOut(BaseModel):
     address: Optional[str]
     longitude: float
     latitude: float
-    admin_code: Optional[int]
+    admin_code: Optional[str]
 
     class Config:
         from_attributes = True
@@ -43,7 +43,8 @@ class CollegeSearchSchema(BaseModel):
     is_double_first: Optional[bool] = Field(None, description="是否双一流高校",examples=[0,1])
 
 class CollegeCreateSchema(BaseModel):
-    shape: str = Field(..., description="高校地理位置几何信息，格式如 'POINT(经度 纬度)'",examples=["POINT(113.2 23.1)"])
+    college_id:int = Field(..., description="高校ID")
+    shape: str = Field(..., description="高校地理位置几何信息，格式如 'POINT(纬度 经度)'",examples=["POINT(23.121 112.654)"])
     province: str = Field(..., description="省份",examples=["湖南"])
     name: str = Field(..., description="高校名称",examples=["中南大学"])
     category: str = Field(..., description="高校类别",examples=["综合类","理工类","师范类"])
@@ -57,7 +58,7 @@ class CollegeCreateSchema(BaseModel):
     address: Optional[str] = Field(None, description="详细地址")
     longitude: float = Field(..., description="经度")
     latitude: float = Field(..., description="纬度")
-    admin_code: Optional[int] = Field(None, description="行政区划代码",examples=[430000])
+    admin_code: Optional[str] = Field(None, description="行政区划代码",examples=["156211300"])
 
 class CollegeUpdateSchema(BaseModel):
     shape: Optional[str] = Field(None, description="高校地理位置几何信息，格式如 'POINT(经度 纬度)'",examples=["POINT(113.2 23.1)"])
@@ -74,7 +75,7 @@ class CollegeUpdateSchema(BaseModel):
     address: Optional[str] = Field(None, description="详细地址")
     longitude: Optional[float] = Field(None, description="经度")
     latitude: Optional[float] = Field(None, description="纬度")
-    admin_code: Optional[int] = Field(None, description="行政区划代码",examples=[430000])
+    admin_code: Optional[str] = Field(None, description="行政区划代码",examples=["156211300"])
 
 class EvaluationCreateSchema(BaseModel):
     Dietary_evaluation: Optional[str] = Field(None, description="饮食评价")
@@ -85,7 +86,6 @@ class EvaluationUpdateSchema(EvaluationCreateSchema):
     ...
 
 class CollegeOutWithId(CollegeOut):
-    college_id: int
 
     class Config:
         from_attributes = True

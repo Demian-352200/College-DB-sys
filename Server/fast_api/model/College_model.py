@@ -9,7 +9,8 @@ from datetime import datetime
 
 class CollegeModel(Base):
     __tablename__ = "College"
-    college_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    OBJECTID: Mapped[int] = mapped_column(Integer, unique=True, autoincrement=True,nullable=False)
+    college_id: Mapped[int] = mapped_column(Integer,primary_key=True,nullable=False)
     shape: Mapped[Geometry] = mapped_column(Geometry(srid=4326), nullable=False)
     province: Mapped[str] = mapped_column(String(254), nullable=False)
     name: Mapped[str] = mapped_column(String(254), nullable=False)
@@ -26,7 +27,7 @@ class CollegeModel(Base):
     address: Mapped[str] = mapped_column(String(254), nullable=True)
     longitude: Mapped[float] = mapped_column(Float, nullable=True)
     latitude: Mapped[float] = mapped_column(Float, nullable=True)
-    admin_code: Mapped[int] = mapped_column(Integer, nullable=True)
+    admin_code: Mapped[str] = mapped_column(String(9), nullable=True)
 
     def serialize(self):
         # 处理几何字段的序列化

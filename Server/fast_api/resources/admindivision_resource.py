@@ -9,7 +9,6 @@ from Server.fast_api.model import CollegeModel
 from Server.fast_api.services.base import get_current_user
 
 class AdminDivisionOut(BaseModel):
-    OBJECTID: int = Field(..., description="OBJECTID")
     shape: str = Field(..., description="高校地理位置几何信息，格式如 'POINT(纬度 经度)'",examples=["POINT(23.145 112.564)"])
     name: str = Field(..., description="名称")
     admin_code: int = Field(..., description="行政区划代码")
@@ -17,8 +16,7 @@ class AdminDivisionOut(BaseModel):
         from_attributes = True
 
 class AdminDivisionCreate(AdminDivisionOut):
-    OBJECTID:Optional[int] = Field(None, description="OBJECTID")
-
+    ...
 @app.get("/admin/",
          tags=["AdminDivision"],
          summary="获取所有行政区划数据",

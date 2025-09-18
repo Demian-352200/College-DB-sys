@@ -23,7 +23,6 @@ class AdminDivisionModel(Base):
                 # 如果无法转换，则设为None
                 shape_wkt = None
         return {
-            'OBJECTID':self.OBJECTID,
             'admin_code': self.admin_code,
             'shape': shape_wkt,
             'name': self.name,
