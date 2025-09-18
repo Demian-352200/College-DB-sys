@@ -7,10 +7,10 @@ from Server.fast_api.resources import Base
 
 class AdminDivisionModel(Base):
     __tablename__ = "AdminDivision"
-    admin_code: Mapped[int] = mapped_column(Integer, primary_key=True)
-    shape: Mapped[Geometry] = mapped_column(Geometry, nullable=False)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    level: Mapped[str] = mapped_column(Enum('省', '市', '县', name='admin_level_enum'), nullable=False)
+    OBJECTID: Mapped[int] = mapped_column(Integer, unique=True, autoincrement=True)
+    admin_code: Mapped[str] = mapped_column(String(9), primary_key=True)
+    shape: Mapped[Geometry] = mapped_column(Geometry(srid=4326), nullable=False)
+    name: Mapped[str] = mapped_column(String(33), nullable=False)
 
     def serialize(self):
         # 处理几何字段的序列化
@@ -23,8 +23,8 @@ class AdminDivisionModel(Base):
                 # 如果无法转换，则设为None
                 shape_wkt = None
         return {
+            'OBJECTID':self.OBJECTID,
             'admin_code': self.admin_code,
             'shape': shape_wkt,
             'name': self.name,
-            'level': self.level,
         }

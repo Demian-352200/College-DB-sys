@@ -9,15 +9,15 @@ from Server.fast_api.model import CollegeModel
 from Server.fast_api.services.base import get_current_user
 
 class AdminDivisionOut(BaseModel):
-    admin_code: int = Field(..., description="行政区划代码")
-    shape: str = Field(..., description="高校地理位置几何信息，格式如 'POINT(经度 纬度)'",examples=["POINT(113.2 23.1)"])
+    OBJECTID: int = Field(..., description="OBJECTID")
+    shape: str = Field(..., description="高校地理位置几何信息，格式如 'POINT(纬度 经度)'",examples=["POINT(23.145 112.564)"])
     name: str = Field(..., description="名称")
-    level: str = Field(..., description="省/市/县",examples=["省","市","县"])
+    admin_code: int = Field(..., description="行政区划代码")
     class Config:
         from_attributes = True
 
 class AdminDivisionCreate(AdminDivisionOut):
-    ...
+    OBJECTID:Optional[int] = Field(None, description="OBJECTID")
 
 @app.get("/admin/",
          tags=["AdminDivision"],
