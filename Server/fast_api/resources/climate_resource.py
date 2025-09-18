@@ -117,7 +117,7 @@ async def get_all_climate(db_session: Session = Depends(get_db_session)):
          tags=["ClimateData"],
          summary="获取特定区域气候详细信息",
          description="根据气候ID获取特定区域详细气候信息")
-async def get_climate_info(admin_code: int, db_session: Session = Depends(get_db_session)):
+async def get_climate_info(admin_code: str, db_session: Session = Depends(get_db_session)):
     try:
         result = ClimateService().get_climate_by_id(admin_code, db_session)
         if result:

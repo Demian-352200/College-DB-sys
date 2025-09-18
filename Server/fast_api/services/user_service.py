@@ -43,7 +43,7 @@ class UserService(BaseService):
             province=province,
             city=city,
             address=address,
-            role='user',  # 默认为普通用户
+            role='user',
             location=location,
             adcode=adcode,
             citycode=citycode

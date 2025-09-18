@@ -5,10 +5,14 @@ from sqlalchemy import Select
 
 
 class ClimateService(BaseService):
-    def get_climate_by_id(self, admin_code: int, db_session: Session):
+    def get_climate_by_id(self, admin_code: str, db_session: Session):
         """
         根据ID获取特定区域气候信息
         """
+        # 检查admin_code是否为有效值
+        if not admin_code:
+            return None
+            
         return db_session.get(ClimateDataModel, admin_code)
 
     def get_all_climate(self, db_session: Session):

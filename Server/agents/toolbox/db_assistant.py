@@ -628,6 +628,23 @@ def plan_transit_route(
             "message": "请求高德地图API时发生错误"
         }
 
+def analys_transit_route(college_name:str):
+    """
+    访问后端api进行交通分析，只需要大学名称即可
+    :param college_name: 大学名称
+    :return:
+    """
+    try:
+        response = requests.get(f"{BASE_URL}/colleges/search/?name={college_name}")
+        if response.status_code != 200:
+            return "无法获取高校信息"
+        college_id = response.json()[0]["college_id"]
+        traffic_analyst = requests.post(f"{BASE_URL}/server/traffic/{college_id}")
+        traffic_analyst.raise_for_status()
+        return traffic_analyst.json()
+    except Exception as e:
+        return str(e)
+
 # 创建工具实例
 get_all_colleges_tool = FunctionTool(
     get_all_colleges,
@@ -727,4 +744,9 @@ plan_transit_route_tool = FunctionTool(
 get_geo_info_tool = FunctionTool(
     get_geo_info,
     description="使用髙德地图API 地理编码查询接口，参数：地址(address)、城市(city，可选值)"
+)
+
+analys_transit_route_for_agent_tool = FunctionTool(
+    analys_transit_route,
+    description="规划公交路线（路径规划）工具，通过后端api进行，参数：目标院校名称(college_name)"
 )

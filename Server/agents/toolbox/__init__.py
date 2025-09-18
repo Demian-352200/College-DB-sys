@@ -20,7 +20,8 @@ from .db_assistant import (
     get_admin_divisions_by_id_tool,
     get_geo_info_tool,
     get_all_users_tool,
-    get_all_evaluations_tool
+    get_all_evaluations_tool,
+    analys_transit_route_for_agent_tool
 )
 from .ai_response import ai_response
 
@@ -32,7 +33,6 @@ tool_box_for_agent=[
     get_climate_by_id_tool,
     get_all_admin_divisions_tool,
     get_admin_division_by_id_tool,
-    plan_transit_route_tool,
     add_college_tool,
     add_evaluation_for_college_tool,
     update_evaluation_for_college_tool,
@@ -44,7 +44,10 @@ tool_box_for_agent=[
     get_admin_divisions_by_id_tool,
     get_geo_info_tool,
     get_all_users_tool,
-    get_all_evaluations_tool
+    get_all_evaluations_tool,
+    analys_transit_route_for_agent_tool,
+    # plan_transit_route_tool
+
 ]
 __all__=[
     'tool_box_for_agent',
@@ -70,5 +73,6 @@ __all__=[
     'get_admin_divisions_by_id_tool',
     'get_geo_info_tool',
     'get_all_users_tool',
-    'get_all_evaluations_tool'
+    'get_all_evaluations_tool',
+    'analys_transit_route_for_agent_tool'
 ]

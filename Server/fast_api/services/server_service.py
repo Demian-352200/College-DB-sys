@@ -12,7 +12,7 @@ from Server.agents.messages import (
 from Server.fast_api.common import SERVER_URL
 from Server.fast_api.services import BaseService
 from sqlalchemy.orm import Session
-from Server.fast_api.model import CollegeModel
+from Server.fast_api.model import CollegeModel,AdminDivisionModel
 
 
 class ServerService(BaseService):
@@ -83,15 +83,38 @@ class ServerService(BaseService):
             if not college:
                 raise HTTPException(status_code=404, detail="College not found")
             college_province = college.province
+            college_city = college.city
+            college_city_admin_code = college.admin_code
+            if hasattr(college_city_admin_code, '__get__'):
+                college_city_admin_code = college_city_admin_code.__get__(college, type(college))
+            
+            from Server.fast_api.services import ClimateService
+            college_climate = ClimateService().get_climate_by_id(college_city_admin_code, db_session)
+            college_climate = json.dumps(college_climate.serialize(),ensure_ascii=False)
+            print(college_climate)
 
             from Server.fast_api.services import UserService
             user = UserService().get_user_by_id(user_id, db_session)
             user_province = user.province
+            user_city = user.city
+            user_adcode = user.adcode
+            if hasattr(user_adcode, '__get__'):
+                user_adcode = user_adcode.__get__(user, type(user))
+
+            user_adcode = user_adcode // 10 *10
+            user_climate = ClimateService().get_climate_by_id(user_adcode, db_session)
+            user_climate = json.dumps(user_climate.serialize(),ensure_ascii=False)
+            print(user_climate)
+
 
             prompt=f"""
-            我是{user_province}省的高考生，我想去{college_province}省的{college.name}大学，请帮我比较两地的气候差异，并给出比较结果。
+            我是{user_province}省{user_city}的高考生，我想去{college_province}省{college_city}的{college.name}大学，请帮我比较两地的气候差异，并给出比较结果。
+            以下是两地的气候信息，包括三年的逐月平均气温与降水量：
+            # {college_city}的气候信息：
+            {college_climate}
+            # {user_city}的气候信息：
+            {user_climate}
             """
             return prompt
         except Exception as e:
-            raise ValueError(f"Failed to plan transit route: {e}")
-
+            raise ValueError(f"Failed to analyze climate data: {e}")
