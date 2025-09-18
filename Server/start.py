@@ -136,6 +136,7 @@ async def run_both():
             app="Server.fast_api.resources:app",
             host="0.0.0.0",
             port=8080,
+            reload=True
         )
     )
     await asyncio.gather(

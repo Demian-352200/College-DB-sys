@@ -27,7 +27,7 @@ class PendingCollegeModel(Base):
     address: Mapped[str] = mapped_column(String(255), nullable=True)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
-    admin_code: Mapped[int] = mapped_column(Integer, ForeignKey('AdminDivision.admin_code'), nullable=True)
+    admin_code: Mapped[str] = mapped_column(String(9), nullable=True)
     submit_time: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow)
     college_id: Mapped[str] = mapped_column(String(9), nullable=False)
 
