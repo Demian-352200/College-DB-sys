@@ -5,11 +5,11 @@ from sqlalchemy import Select
 
 
 class ClimateService(BaseService):
-    def get_climate_by_id(self, climate_id: int, db_session: Session):
+    def get_climate_by_id(self, admin_code: int, db_session: Session):
         """
         根据ID获取特定区域气候信息
         """
-        return db_session.get(ClimateDataModel, climate_id)
+        return db_session.get(ClimateDataModel, admin_code)
 
     def get_all_climate(self, db_session: Session):
         """
