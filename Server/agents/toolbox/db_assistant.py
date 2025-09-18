@@ -10,6 +10,31 @@ AMAP_API_KEY = "4f5f5a597664fab05f7e0288e5cfc47c"  # 需要在实际使用中替
 AMAP_TRANSIT_ROUTE_URL = "https://restapi.amap.com/v3/direction/transit/integrated"
 AMAP_GEO_CODING_URL = "https://restapi.amap.com/v3/geocode/geo"
 
+# 全局变量用于存储认证token
+_auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwidXNlcm5hbWUiOiJkZW1pYW4iLCJwcm92aW5jZSI6Ilx1NmU1Nlx1NTM1NyIsImNpdHkiOiJcdTk1N2ZcdTZjOTkiLCJhZGRyZXNzIjoiXHU2ZTU2XHU1MzU3XHU3NzAxXHU5NTdmXHU2Yzk5XHU1ZTAyXHU1Y2IzXHU5ZTkzXHU1MzNhXHU1Y2IzXHU5ZTkzXHU4ODU3XHU5MDUzXHU0ZTJkXHU1MzU3XHU1OTI3XHU1YjY2XHU1MzQ3XHU1MzRlXHU1MTZjXHU1YmQzIiwibG9jYXRpb24iOiIxMTIuOTM0MDIyLDI4LjE1OTc2NiIsImFkY29kZSI6NDMwMTA0LCJjaXR5Y29kZSI6IjA3MzEifQ.FkQwx039WZjCmSyes62NOE8LbEjmGY7KzacnbQ1jD-U"
+
+def set_auth_token(token: str):
+    """
+    设置认证token用于后续API请求
+    
+    Args:
+        token (str): JWT token
+    """
+    global _auth_token
+    _auth_token = token
+
+def _get_headers():
+    """
+    获取请求头，如果存在认证token则添加到请求头中
+    
+    Returns:
+        Dict[str, str]: 请求头字典
+    """
+    headers = {}
+    if _auth_token:
+        headers["Authorization"] = f"Bearer {_auth_token}"
+    return headers
+
 def add_admin(admin_code: int, shape: str, name: str, level: Literal["省", "市", "县"]):
     """
     添加新行政区划数据
@@ -26,7 +51,8 @@ def add_admin(admin_code: int, shape: str, name: str, level: Literal["省", "市
     try:
         response = requests.post(
             f"{BASE_URL}/admin/",
-            json={"admin_code": admin_code, "shape": shape, "name": name, "level": level}
+            json={"admin_code": admin_code, "shape": shape, "name": name, "level": level},
+            headers=_get_headers()
         )
         response.raise_for_status()
         return response.json()
@@ -44,7 +70,7 @@ def get_admin_by_id(admin_code: int) -> Dict[str, Any]:
         Dict[str, Any]: 行政区划详细信息
     """
     try:
-        response = requests.get(f"{BASE_URL}/admin/{admin_code}")
+        response = requests.get(f"{BASE_URL}/admin/{admin_code}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -58,7 +84,7 @@ def get_all_colleges() -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 高校数据列表
     """
     try:
-        response = requests.get(f"{BASE_URL}/colleges/")
+        response = requests.get(f"{BASE_URL}/colleges/", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -75,32 +101,33 @@ def get_college_by_id(college_id: int) -> Dict[str, Any]:
         Dict[str, Any]: 高校详细信息
     """
     try:
-        response = requests.get(f"{BASE_URL}/colleges/{college_id}")
+        response = requests.get(f"{BASE_URL}/colleges/{college_id}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
         return {"error": str(e)}
 
 def add_college(
+    college_id:int,
     name: str,
     province: str,
     city: str,
     category: Literal['综合类', '理工类', '师范类', '医药类', '财经类', '艺术类', '农林类', '政法类', '其他', '语言类', '体育类', '军事类', '民族类'],
     nature: Literal['公办', '民办', '中外合办'],
-    type: Literal['本科', '专科'],
-    is_985: bool,
-    is_211: bool,
-    is_double_first: bool,
-    address: str,
-    latitude: float,
+    type: Optional[Literal['普通本科', '专科（高职）']],
+    is_985: Literal[0,1],
+    is_211: Literal[0,1],
+    is_double_first: Literal[0,1],
+    address: Optional[str],
     longitude: float,
+    latitude: float,
     shape: str,
-    affiliation: str,
-    admin_code: int
+    affiliation: Optional[str],
+    admin_code: Optional[str]
 ) -> Dict[str, Any]:
     """
     添加一个新高校数据
-
+    :param college_id:学校代码
     :param name: 大学名称
     :param province: 所在省份
     :param city: 所在城市
@@ -122,6 +149,7 @@ def add_college(
         response = requests.post(
             f"{BASE_URL}/colleges/",
             json={
+                "college_id":college_id,
                 "name": name,
                 "province": province,
                 "city": city,
@@ -137,7 +165,8 @@ def add_college(
                 "shape": shape,
                 "affiliation": affiliation,
                 "admin_code": admin_code
-            }
+            },
+            headers=_get_headers()
         )
         response.raise_for_status()
         return response.json()
@@ -145,26 +174,26 @@ def add_college(
         return {"error": str(e)}
 
 def update_college(
-    college_id: int,
+    college_id: Optional[int],
     shape:Optional[str],
     name: Optional[str],
     province: Optional[str],
     city: Optional[str],
     category: Optional[Literal['综合类', '理工类', '师范类', '医药类', '财经类', '艺术类', '农林类', '政法类', '其他', '语言类', '体育类', '军事类', '民族类']],
     nature: Optional[Literal['公办', '民办', '中外合办']],
-    type: Optional[Literal['本科', '专科']],
-    is_985: Optional[bool],
-    is_211: Optional[bool],
-    is_double_first: Optional[bool],
+    type: Optional[Literal['普通本科', '专科（高职）']],
+    is_985: Optional[Literal[0,1]],
+    is_211: Optional[Literal[0,1]],
+    is_double_first: Optional[Literal[0,1]],
     address: Optional[str],
     latitude: Optional[float],
     longitude: Optional[float],
     affiliation: Optional[str],
-    admin_code: Optional[int]
+    admin_code: Optional[str]
 )-> Dict[str, Any]:
     """
     更新一个高校数据
-
+    :param college_id:学校代码
     :param province: 所在省份
     :param city: 所在城市
     :param category:大学种类
@@ -185,6 +214,7 @@ def update_college(
         response = requests.put(
             f"{BASE_URL}/colleges/{college_id}",
             json={
+                "college_id":college_id,
                 "name": name,
                 "province": province,
                 "city": city,
@@ -200,7 +230,8 @@ def update_college(
                 "shape": shape,
                 "affiliation": affiliation,
                 "admin_code": admin_code
-            }
+            },
+            headers=_get_headers()
         )
         response.raise_for_status()
         return response.json()
@@ -250,7 +281,7 @@ def search_colleges(
         # 移除None值
         params = {k: v for k, v in params.items() if v is not None}
         
-        response = requests.get(f"{BASE_URL}/colleges/search/", params=params)
+        response = requests.get(f"{BASE_URL}/colleges/search/", params=params, headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -267,7 +298,7 @@ def del_college_by_id(college_id: int):
         Dict[str, Any]: 删除结果
     """
     try:
-        response = requests.delete(f"{BASE_URL}/colleges/{college_id}")
+        response = requests.delete(f"{BASE_URL}/colleges/{college_id}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -281,7 +312,7 @@ def get_all_climate() -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 气候数据列表
     """
     try:
-        response = requests.get(f"{BASE_URL}/climate/")
+        response = requests.get(f"{BASE_URL}/climate/", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -322,7 +353,8 @@ def add_climate(
                 "annual_precipitation": annual_precipitation,
                 "monthly_avg_precip": monthly_avg_precip,
                 "admin_code": admin_code
-            }
+            },
+            headers=_get_headers()
         )
         response.raise_for_status()
         return response.json()
@@ -352,7 +384,8 @@ def add_evaluation_for_college(college_id: int,
                 "Dietary_evaluation": Dietary_evaluation,
                 "Traffic_evaluation": Traffic_evaluation,
                 "Evaluation": Evaluation
-            }
+            },
+            headers=_get_headers()
         )
         response.raise_for_status()
         return response.json()
@@ -401,11 +434,12 @@ def del_evaluation_by_id(evaluation_id: int):
         Dict[str, Any]: 删除结果
     """
     try:
-        response = requests.delete(f"{BASE_URL}/evaluations/{evaluation_id}")
+        response = requests.delete(f"{BASE_URL}/evaluations/{evaluation_id}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
         return {"error": str(e)}
+
 def get_climate_by_id(climate_id: int) -> Dict[str, Any]:
     """
     根据ID获取特定区域气候详细信息
@@ -417,7 +451,7 @@ def get_climate_by_id(climate_id: int) -> Dict[str, Any]:
         Dict[str, Any]: 气候详细信息
     """
     try:
-        response = requests.get(f"{BASE_URL}/climate/{climate_id}")
+        response = requests.get(f"{BASE_URL}/climate/{climate_id}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -431,7 +465,7 @@ def get_all_admin_divisions() -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 行政区划数据列表
     """
     try:
-        response = requests.get(f"{BASE_URL}/admin/")
+        response = requests.get(f"{BASE_URL}/admin/", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -445,7 +479,7 @@ def get_all_evaluations() -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 评价数据列表
     """
     try:
-        response = requests.get(f"{BASE_URL}/colleges/evaluations/")
+        response = requests.get(f"{BASE_URL}/colleges/evaluations/", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -462,7 +496,7 @@ def get_admin_division_by_id(admin_code: int) -> Dict[str, Any]:
         Dict[str, Any]: 行政区划详细信息
     """
     try:
-        response = requests.get(f"{BASE_URL}/admin/{admin_code}")
+        response = requests.get(f"{BASE_URL}/admin/{admin_code}", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -476,7 +510,7 @@ def get_all_users() -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 用户信息列表
     """
     try:
-        response = requests.get(f"{BASE_URL}/user/")
+        response = requests.get(f"{BASE_URL}/user/", headers=_get_headers())
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -635,11 +669,11 @@ def analys_transit_route(college_name:str):
     :return:
     """
     try:
-        response = requests.get(f"{BASE_URL}/colleges/search/?name={college_name}")
+        response = requests.get(f"{BASE_URL}/colleges/search/?name={college_name}", headers=_get_headers())
         if response.status_code != 200:
             return "无法获取高校信息"
         college_id = response.json()[0]["college_id"]
-        traffic_analyst = requests.post(f"{BASE_URL}/server/traffic/{college_id}")
+        traffic_analyst = requests.post(f"{BASE_URL}/server/traffic/{college_id}", headers=_get_headers())
         traffic_analyst.raise_for_status()
         return traffic_analyst.json()
     except Exception as e:
