@@ -9,6 +9,7 @@ type Props = {
 
 export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) {
   const [formData, setFormData] = useState({
+    college_id: 0, // 添加college_id字段
     name: '',
     province: '',
     city: '',
@@ -30,6 +31,7 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       const data = {
+        college_id: initialData.college_id || 0, // 添加college_id字段
         name: initialData.name || '',
         province: initialData.province || '',
         city: initialData.city || '',
@@ -61,6 +63,7 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
         const data = await response.json();
         const collegeData = data.college || data;
         const formDataObj = {
+          college_id: collegeData.college_id || 0, // 添加college_id字段
           name: collegeData.name || '',
           province: collegeData.province || '',
           city: collegeData.city || '',
@@ -104,17 +107,29 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
       let response;
       
       if (mode === 'create') {
+        // 确保college_id不为0，如果为0则使用当前时间戳
+        const collegeIdValue = formData.college_id || Date.now();
+        
         response = await fetch('/api/colleges/', {
           method: 'POST',
           headers: buildHeaders() as HeadersInit,
           body: JSON.stringify({
-            ...formData,
+            college_id: collegeIdValue, // 添加college_id字段
+            name: formData.name,
+            province: formData.province,
+            city: formData.city,
+            category: formData.category,
+            nature: formData.nature,
+            type: formData.type || undefined,
             is_985: parseInt(formData.is_985.toString()) || 0,
             is_211: parseInt(formData.is_211.toString()) || 0,
             is_double_first: parseInt(formData.is_double_first.toString()) || 0,
             longitude: parseFloat(formData.longitude) || 0,
             latitude: parseFloat(formData.latitude) || 0,
-            admin_code: formData.admin_code ? parseInt(formData.admin_code.toString()) : null
+            address: formData.address || undefined,
+            affiliation: formData.affiliation || undefined,
+            admin_code: formData.admin_code || undefined, // 保持字符串类型
+            shape: `POINT(${parseFloat(formData.latitude) || 0} ${parseFloat(formData.longitude) || 0})` // 修正经纬度顺序
           })
         });
       } else if (mode === 'edit' && collegeId) {
@@ -134,7 +149,10 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
             } else if (['longitude', 'latitude'].includes(key)) {
               changedFields[key] = parseFloat(formData[key as keyof typeof formData].toString()) || 0;
             } else if (key === 'admin_code' && formData[key]) {
-              changedFields[key] = parseInt(formData[key as keyof typeof formData].toString());
+              changedFields[key] = formData[key as keyof typeof formData]; // 保持字符串类型
+            } else if (key === 'college_id') {
+              // college_id在编辑模式下不应该更改，所以跳过
+              return;
             } else if (formData[key as keyof typeof formData] !== '') {
               changedFields[key] = formData[key as keyof typeof formData];
             }
@@ -171,6 +189,20 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
     <form onSubmit={handleSubmit} className="college-form">
       <div className="form-section">
         <h4>基本信息</h4>
+        {mode === 'create' && (
+          <div className="form-row">
+            <div className="form-group">
+              <label>高校ID *</label>
+              <input
+                type="number"
+                value={formData.college_id || ''}
+                onChange={(e) => handleChange('college_id', parseInt(e.target.value) || 0)}
+                placeholder="请输入高校ID，留空则自动生成"
+              />
+            </div>
+          </div>
+        )}
+        
         <div className="form-row">
           <div className="form-group">
             <label>高校名称 *</label>

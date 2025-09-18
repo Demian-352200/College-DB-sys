@@ -90,8 +90,10 @@ class ServerService(BaseService):
             
             from Server.fast_api.services import ClimateService
             college_climate = ClimateService().get_climate_by_id(college_city_admin_code, db_session)
-            college_climate = json.dumps(college_climate.serialize(),ensure_ascii=False)
-            print(college_climate)
+            # 添加对college_climate为None的检查
+            if college_climate :
+                college_climate = json.dumps(college_climate.serialize(),ensure_ascii=False)
+                print(college_climate)
 
             from Server.fast_api.services import UserService
             user = UserService().get_user_by_id(user_id, db_session)
@@ -103,8 +105,10 @@ class ServerService(BaseService):
 
             user_adcode = user_adcode // 10 *10
             user_climate = ClimateService().get_climate_by_id(user_adcode, db_session)
-            user_climate = json.dumps(user_climate.serialize(),ensure_ascii=False)
-            print(user_climate)
+            # 添加对user_climate为None的检查
+            if user_climate:
+                user_climate = json.dumps(user_climate.serialize(),ensure_ascii=False)
+                print(user_climate)
 
 
             prompt=f"""

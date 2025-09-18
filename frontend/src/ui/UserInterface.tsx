@@ -325,9 +325,15 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
       }
       
       setAnalysisResults(prev => [newResult, ...prev])
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('气候分析失败:', error)
-      showNotification(`气候分析失败: ${error.message || error}`, 5000)
+      let errorMessage = '气候分析失败';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      showNotification(errorMessage, 5000)
     }
   }
 
