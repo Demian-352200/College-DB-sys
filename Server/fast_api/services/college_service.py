@@ -188,7 +188,7 @@ class CollegeService(BaseService):
             address=college_data.get('address'),
             longitude=college_data.get('longitude'),
             latitude=college_data.get('latitude'),
-            admin_code=college_data.get('admin_code')
+            admin_code=college_data.get('admin_code') if college_data.get('admin_code') else None  # 处理空字符串
         )
 
         # 保存到待审核表
@@ -410,6 +410,7 @@ class CollegeService(BaseService):
                 if review.review_type == 'new':
                     # 新建高校
                     college = CollegeModel(
+                        college_id=pending_college.college_id,
                         shape=pending_college.shape,
                         province=pending_college.province,
                         name=pending_college.name,
@@ -424,7 +425,7 @@ class CollegeService(BaseService):
                         address=pending_college.address,
                         longitude=pending_college.longitude,
                         latitude=pending_college.latitude,
-                        admin_code=pending_college.admin_code
+                        admin_code=pending_college.admin_code if pending_college.admin_code else None  # 处理空字符串
                     )
                     
                     db_session.add(college)
@@ -457,7 +458,7 @@ class CollegeService(BaseService):
                             college.address = pending_college.address
                             college.longitude = pending_college.longitude
                             college.latitude = pending_college.latitude
-                            college.admin_code = pending_college.admin_code
+                            college.admin_code = pending_college.admin_code if pending_college.admin_code else None  # 处理空字符串
                         
                         db_session.flush()
                         
@@ -591,7 +592,7 @@ class CollegeService(BaseService):
             address= college_data.get('address', college.address),
             longitude= college_data.get('longitude', college.longitude),
             latitude= college_data.get('latitude', college.latitude),
-            admin_code= college_data.get('admin_code', college.admin_code)
+            admin_code= college_data.get('admin_code', college.admin_code) if college_data.get('admin_code', college.admin_code) else None  # 处理空字符串
         )
 
         # 保存到待审核表
