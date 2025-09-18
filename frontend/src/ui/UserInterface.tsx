@@ -38,6 +38,7 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
   const [windows, setWindows] = useState<WindowState[]>([])
   const [nextId, setNextId] = useState(1)
   const [newCollegeData, setNewCollegeData] = useState({
+    college_id: 0, // 添加college_id字段
     name: '',
     province: '',
     city: '',
@@ -288,7 +289,14 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
       })
       
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`)
+        let errorMessage = `HTTP error! status: ${res.status}`;
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.detail || `HTTP error! status: ${res.status}`;
+        } catch (e) {
+          // 如果无法解析JSON，使用默认错误消息
+        }
+        throw new Error(errorMessage);
       }
       
       const data = await res.json().catch(() => ({}))
@@ -319,7 +327,7 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
       setAnalysisResults(prev => [newResult, ...prev])
     } catch (error) {
       console.error('气候分析失败:', error)
-      showNotification(`气候分析失败: ${error}`, 5000)
+      showNotification(`气候分析失败: ${error.message || error}`, 5000)
     }
   }
 
@@ -359,6 +367,7 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
     // 如果关闭的是添加高校窗口，清除表单数据
     if (closingWindow?.type === 'add-college') {
       setNewCollegeData({
+        college_id: 0, // 添加缺失的college_id字段
         name: '',
         province: '',
         city: '',
@@ -434,12 +443,21 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
 
       // 构造提交数据
       const collegeData = {
-        ...newCollegeData,
-        shape: `POINT(${newCollegeData.longitude} ${newCollegeData.latitude})`,
+        college_id: newCollegeData.college_id || Date.now(), // 添加college_id字段，使用时间戳作为默认值
+        name: newCollegeData.name,
+        province: newCollegeData.province,
+        city: newCollegeData.city,
+        category: newCollegeData.category,
+        nature: newCollegeData.nature,
+        type: newCollegeData.type,
         is_985: newCollegeData.is_985 ? 1 : 0,
         is_211: newCollegeData.is_211 ? 1 : 0,
         is_double_first: newCollegeData.is_double_first ? 1 : 0,
-        admin_code: newCollegeData.admin_code ? parseInt(newCollegeData.admin_code as string) : undefined
+        address: newCollegeData.address,
+        longitude: newCollegeData.longitude,
+        latitude: newCollegeData.latitude,
+        shape: `POINT(${newCollegeData.longitude} ${newCollegeData.latitude})`,
+        admin_code: newCollegeData.admin_code || undefined // 修正admin_code处理
       }
 
       const response = await fetch('/api/colleges/', {
@@ -452,8 +470,14 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || '提交失败')
+        let errorMessage = '提交失败';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || JSON.stringify(errorData) || `HTTP Error: ${response.status}`;
+        } catch (e) {
+          errorMessage = `HTTP Error: ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json()
@@ -464,6 +488,7 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
       
       // 清空表单
       setNewCollegeData({
+        college_id: 0, // 重置college_id
         name: '',
         province: '',
         city: '',
@@ -1095,7 +1120,7 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
                     collegeId={selectedCollege.college_id} 
                     onSuccess={() => {
                       fetchUserEvaluations();
-                      setNotifications(prev => [...prev, `成功为 ${selectedCollege.name} 添加评价`]);
+                      showNotification(`成功为 ${selectedCollege.name} 添加评价`, 3000);
                     }} 
                   />
                   <div className="form-actions">
@@ -1169,6 +1194,16 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
             <div className="add-college-form">
               <h3>添加新高校</h3>
               <p>注意：普通用户提交的高校信息需要管理员审核后才能显示</p>
+              
+              <div className="form-group">
+                <label>高校ID *</label>
+                <input
+                  type="number"
+                  value={newCollegeData.college_id || ''}
+                  onChange={(e) => handleAddCollegeChange('college_id', parseInt(e.target.value) || 0)}
+                  placeholder="请输入高校ID"
+                />
+              </div>
               
               <div className="form-group">
                 <label>高校名称 *</label>

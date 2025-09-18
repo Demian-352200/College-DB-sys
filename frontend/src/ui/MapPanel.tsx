@@ -10,7 +10,7 @@ type Props = {
 }
 
 type CollegeOut = {
-  college_id: string
+  college_id: number  // 修复类型为number
   name: string
   longitude: number
   latitude: number
@@ -23,7 +23,7 @@ type CollegeOut = {
   is_211?: number
   is_double_first?: number
   address?: string
-  admin_code?: string | null
+  admin_code?: string | null  // 保持string类型，因为这是行政区划代码
   affiliation?: string
 }
 
@@ -349,7 +349,7 @@ const MapPanel: React.FC<Props> = ({ onSelect, selectedCollegeId: propsSelectedC
           })
           
           // 将标记添加到Map中便于后续查找
-          collegeMarkersMap.set(c.college_id, marker)
+          collegeMarkersMap.set(Number(c.college_id), marker)
           
           // 绑定弹出框
           const popupContent = `
@@ -394,7 +394,7 @@ const MapPanel: React.FC<Props> = ({ onSelect, selectedCollegeId: propsSelectedC
           // 绑定点击事件
           marker.on('click', () => {
             const college: College = {
-              college_id: c.college_id,
+              college_id: Number(c.college_id),  // 确保转换为number类型
               name: c.name,
               province: c.province,
               city: c.city,
@@ -407,7 +407,7 @@ const MapPanel: React.FC<Props> = ({ onSelect, selectedCollegeId: propsSelectedC
               address: c.address,
               longitude,
               latitude,
-              admin_code: c.admin_code,
+              admin_code: c.admin_code ? Number(c.admin_code) : null,  // 修正类型转换
               affiliation: c.affiliation || '',
             };
             onSelect(college);
