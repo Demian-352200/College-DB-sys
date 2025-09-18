@@ -274,44 +274,6 @@ export function Sidebar({ selectedCollege, onSelect }: Props) {
     setMessages((m) => [...m, `审核结果: ${JSON.stringify(data)}`])
   }
 
-  // AdminDivision & Climate
-  const getAllAdmin = async () => {
-    const res = await fetch('/api/admin/')
-    const data = await res.json()
-    setAdminAll(Array.isArray(data) ? data : [])
-  }
-  const getOneAdmin = async () => {
-    if (!adminCode) return
-    const res = await fetch(`/api/admin/${adminCode}`)
-    const data = await res.json()
-    setAdminOne(data)
-  }
-  const getAllClimate = async () => {
-    const res = await fetch('/api/climate/')
-    const data = await res.json()
-    setClimateAll(Array.isArray(data) ? data : [])
-  }
-  const getOneClimate = async () => {
-    if (!climateId) return
-    const res = await fetch(`/api/climate/${climateId}`)
-    const data = await res.json()
-    setClimateOne(data)
-  }
-  const addClimate = async () => {
-    try {
-      const body = JSON.parse(climateCreateJson)
-      const res = await fetch('/api/climate/', {
-        method: 'POST',
-        headers: buildHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(body)
-      })
-      const data = await res.json()
-      setMessages((m) => [...m, `新增气候: ${JSON.stringify(data)}`])
-    } catch {
-      setMessages((m) => [...m, `气候JSON错误`])
-    }
-  }
-
   return (
     <div className="sidebar">
       <h2>智能助手</h2>
@@ -368,7 +330,7 @@ export function Sidebar({ selectedCollege, onSelect }: Props) {
         <input placeholder="省份" value={province} onChange={(e) => setProvince(e.target.value)} />
         <input placeholder="城市" value={city} onChange={(e) => setCity(e.target.value)} />
       </div>
-      <input placeholder="地址(可选)" value={address} onChange={(e) => setAddress(e.target.value)} />
+      <input placeholder="地址" value={address} onChange={(e) => setAddress(e.target.value)} />
       <div className="input-row">
         <button onClick={doLogin}>登录</button>
         <button onClick={doRegister}>注册</button>
@@ -532,40 +494,6 @@ export function Sidebar({ selectedCollege, onSelect }: Props) {
       <input placeholder="备注(可选)" value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} />
       <div className="input-row">
         <button onClick={doReview}>提交审核</button>
-      </div>
-
-      <div className="divider" />
-
-      <h3>行政区划</h3>
-      <div className="input-row">
-        <button onClick={getAllAdmin}>获取全部</button>
-        <input placeholder="admin_code" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} />
-        <button onClick={getOneAdmin}>获取单个</button>
-      </div>
-      {adminAll && (
-        <div className="messages">行政区划数量: {adminAll.length}</div>
-      )}
-      {adminOne && (
-        <div className="messages">单个行政区划: {adminOne?.name}</div>
-      )}
-
-      <div className="divider" />
-
-      <h3>气候数据</h3>
-      <div className="input-row">
-        <button onClick={getAllClimate}>获取全部</button>
-        <input placeholder="climate_id" value={climateId} onChange={(e) => setClimateId(e.target.value)} />
-        <button onClick={getOneClimate}>获取单个</button>
-      </div>
-      {climateAll && (
-        <div className="messages">气候记录数: {climateAll.length}</div>
-      )}
-      {climateOne && (
-        <div className="messages">单个气候: {JSON.stringify(climateOne)}</div>
-      )}
-      <textarea placeholder='新增气候JSON: ClimateOut schema' value={climateCreateJson} onChange={(e) => setClimateCreateJson(e.target.value)} />
-      <div className="input-row">
-        <button onClick={addClimate}>新增气候(需权限)</button>
       </div>
     </div>
   )

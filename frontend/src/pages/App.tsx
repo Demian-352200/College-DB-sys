@@ -79,14 +79,14 @@ export default function App() {
   return (
     <div className="layout">
       <div className="header">
-        <h1>高校数据库管理系统</h1>
+        <h1>全国高等教育资源数据库管理系统</h1>
         <div className="user-info">
           <span>欢迎，{userRole === 'admin' ? '管理员' : '用户'}</span>
           <button onClick={() => {
             const newRole = userRole === 'admin' ? 'user' : 'admin'
             setUserRole(newRole)
             localStorage.setItem('userRole', newRole)
-          }}>切换角色</button>
+          }}>切换界面</button>
           <button onClick={handleLogout}>退出登录</button>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function App() {
         
         <div className="interface-container">
           <div style={{ padding: '10px', background: '#f0f0f0', marginBottom: '10px' }}>
-            <strong>调试信息:</strong> 当前角色: {userRole} | 是否管理员: {userRole === 'admin' ? '是' : '否'}
+            {/*<strong>调试信息:</strong> 当前角色: {userRole}*/}
           </div>
           {userRole === 'admin' ? (
             <AdminInterface 

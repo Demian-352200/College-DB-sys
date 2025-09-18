@@ -241,8 +241,8 @@ export function CollegeForm({ mode, collegeId, initialData, onSuccess }: Props) 
               onChange={(e) => handleChange('type', e.target.value)}
             >
               <option value="">保持不变</option>
-              <option value="本科">本科</option>
-              <option value="专科">专科</option>
+              <option value="普通本科">普通本科</option>
+              <option value="专科（高职）">专科（高职）</option>
             </select>
           </div>
         </div>
