@@ -1248,8 +1248,8 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
                     onChange={(e) => handleAddCollegeChange('type', e.target.value)}
                   >
                     <option value="">请选择类型</option>
-                    <option value="本科">本科</option>
-                    <option value="专科">专科</option>
+                    <option value="普通本科">普通本科</option>
+                    <option value="（高职）专科">专科（高职）</option>
                   </select>
                 </div>
                 
@@ -1436,8 +1436,8 @@ export function UserInterface({ selectedCollege, onSelect, mapDetailCollegeId, o
                         onChange={(e) => handleUpdateCollegeChange('type', e.target.value)}
                       >
                         <option value="">请选择类型</option>
-                        <option value="本科">本科</option>
-                        <option value="专科">专科</option>
+                        <option value="普通本科">普通本科</option>
+                        <option value="专科（高职）">专科（高职）</option>
                       </select>
                     </div>
                     

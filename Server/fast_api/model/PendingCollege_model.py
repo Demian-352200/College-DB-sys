@@ -18,7 +18,7 @@ class PendingCollegeModel(Base):
         Enum('综合类', '理工类', '师范类', '医药类', '财经类', '艺术类', '农林类', '政法类', '其他', '语言类', '体育类', '军事类', '民族类',
              name='pending_college_category_enum'), nullable=False)
     nature: Mapped[str] = mapped_column(Enum('公办', '民办', '中外合办', name='pending_college_nature_enum'), nullable=False)
-    type: Mapped[str] = mapped_column(Enum('专科', '本科', name='pending_college_type_enum'), nullable=True)
+    type: Mapped[str] = mapped_column(String(254), nullable=True)
     is_985: Mapped[int] = mapped_column(TINYINT(1), nullable=False, default=0)
     is_211: Mapped[int] = mapped_column(TINYINT(1), nullable=False, default=0)
     is_double_first: Mapped[int] = mapped_column(TINYINT(1), nullable=False, default=0)
