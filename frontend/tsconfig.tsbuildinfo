@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/pages/App.tsx","./src/ui/AdminInterface.tsx","./src/ui/AuthModal.tsx","./src/ui/CollegeForm.tsx","./src/ui/EvaluationForm.tsx","./src/ui/FeatureCard.tsx","./src/ui/MapPanel.tsx","./src/ui/Sidebar.tsx","./src/ui/UserInterface.tsx","./src/ui/UserManagement.tsx"],"version":"5.9.2"}

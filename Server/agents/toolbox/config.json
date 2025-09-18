@@ -1,0 +1,12 @@
+{
+    "model": {
+        "name": "deepseek-chat",
+        "API_KEY": "sk-db8634d2da6d4c5eae6fe19a88b8b917",
+        "base_url": "https://api.deepseek.com/v1"
+    },
+    "AMAP":
+            {
+                "AMAP_API_KEY": "",
+                "AMAP_TRANSIT_ROUTE_URL": "https://restapi.amap.com/v5/direction/transit/integrated"
+            }
+}
