@@ -79,7 +79,7 @@ export default function App() {
   return (
     <div className="layout">
       <div className="header">
-        <h1>全国高等教育资源数据库管理系统</h1>
+        <h1>全国高校生活评价空间信息数据库管理系统</h1>
         <div className="user-info">
           <span>欢迎，{userRole === 'admin' ? '管理员' : '用户'}</span>
           <button onClick={() => {

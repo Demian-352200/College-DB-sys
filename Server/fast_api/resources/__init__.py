@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-engine = create_engine('mysql+mysqldb://college_admin:Zzy123456_@127.0.0.1/college_db')
+engine = create_engine('mysql+mysqldb://')
 
 class Base(DeclarativeBase):
     pass
@@ -11,7 +11,7 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 title="College_DB API"
-description="""全国高等教育资源空间数据库 RESTful API"""
+description="""全国高校生活评价空间信息数据库 RESTful API"""
 version="0.0.1"
 tags_metadata=[
     {

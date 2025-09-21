@@ -66,10 +66,10 @@ class ServerService(BaseService):
                                             cityd=str(college.city))
             
             # 删除返回数据中的segments字段
-            if "route" in route_data and "transits" in route_data["route"]:
-                for transit in route_data["route"]["transits"]:
-                    if "segments" in transit:
-                        del transit["segments"]
+            # if "route" in route_data and "transits" in route_data["route"]:
+            #     for transit in route_data["route"]["transits"]:
+            #         if "segments" in transit:
+            #             del transit["segments"]
             
             route_data=json.dumps(route_data,ensure_ascii=False)
             print(route_data)

@@ -6,12 +6,12 @@ from autogen_core.tools import FunctionTool
 BASE_URL = "http://localhost:8080"
 
 # 高德地图API配置（需要在config.json中配置）
-AMAP_API_KEY = "4f5f5a597664fab05f7e0288e5cfc47c"  # 需要在实际使用中替换为真实API密钥
+AMAP_API_KEY = ""  # 需要在实际使用中替换为真实API密钥
 AMAP_TRANSIT_ROUTE_URL = "https://restapi.amap.com/v3/direction/transit/integrated"
 AMAP_GEO_CODING_URL = "https://restapi.amap.com/v3/geocode/geo"
 
 # 全局变量用于存储认证token
-_auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwidXNlcm5hbWUiOiJkZW1pYW4iLCJwcm92aW5jZSI6Ilx1NmU1Nlx1NTM1NyIsImNpdHkiOiJcdTk1N2ZcdTZjOTkiLCJhZGRyZXNzIjoiXHU2ZTU2XHU1MzU3XHU3NzAxXHU5NTdmXHU2Yzk5XHU1ZTAyXHU1Y2IzXHU5ZTkzXHU1MzNhXHU1Y2IzXHU5ZTkzXHU4ODU3XHU5MDUzXHU0ZTJkXHU1MzU3XHU1OTI3XHU1YjY2XHU1MzQ3XHU1MzRlXHU1MTZjXHU1YmQzIiwibG9jYXRpb24iOiIxMTIuOTM0MDIyLDI4LjE1OTc2NiIsImFkY29kZSI6NDMwMTA0LCJjaXR5Y29kZSI6IjA3MzEifQ.FkQwx039WZjCmSyes62NOE8LbEjmGY7KzacnbQ1jD-U"
+_auth_token = ""
 
 def set_auth_token(token: str):
     """
@@ -516,61 +516,6 @@ def get_all_users() -> List[Dict[str, Any]]:
     except Exception as e:
         return {"error": str(e)}
 
-# def plan_transit_route(
-#     # ad1: Optional[str],
-#     # ad2: Optional[str],
-#     origin: str,
-#     destination: str,
-#     city1: str = "021",
-#     city2: str = "010",
-#
-# ) -> Dict[str, Any]:
-#     """
-#     使用高德地图API v5规划公交路线（路径规划2.0）
-#
-#     Args:
-#         ad1(str):可选，起点所在行政区域编码，仅支持adcode
-#         ad1(str):可选，终点所在行政区域编码，仅支持adcode
-#         origin (str): 起点经纬度，经纬度小数点后不超过6位，格式："经度,纬度"，例如："116.481488,39.990464"
-#         destination (str): 终点经纬度，经纬度小数点后不超过6位，格式："经度,纬度"，例如："116.434446,39.90816"
-#         city1 (str): 起点城市，仅支持citycode，相同时代表同城，不同时代表跨城
-#         city2 (str): 终点城市，仅支持citycode，相同时代表同城，不同时代表跨城
-#
-#     Returns:
-#         Dict[str, Any]: 路线规划结果
-#     """
-#     try:
-#         params = {
-#             "key": AMAP_API_KEY,
-#             "origin": origin,
-#             "destination": destination,
-#             "city1": city1,
-#             "city2": city2,
-#             # "ad1": ad1,
-#             # "ad2": ad2
-#         }
-#
-#         # 移除空值参数
-#         params = {k: v for k, v in params.items() if v}
-#
-#         response = requests.get(AMAP_TRANSIT_ROUTE_URL, params=params)
-#         response.raise_for_status()
-#         result = response.json()
-#
-#         if result.get("status") == "1":
-#             return result
-#         else:
-#             return {
-#                 "success": False,
-#                 "error_code": result.get("infocode"),
-#                 "message": result.get("info", "路线规划失败")
-#             }
-#     except Exception as e:
-#         return {
-#             "success": False,
-#             "error": str(e),
-#             "message": "请求高德地图API时发生错误"
-#         }
 
 def get_geo_info(address: str, city: Optional[str]) -> Dict[str, Any]:
     """
